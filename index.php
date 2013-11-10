@@ -17,14 +17,22 @@
     $_array_geral = array();
     
     
-   // echo isset($_GET['control']) ? $_GET['control']:'nao existe ou vazio';
+    if(file_exists(BASESYSTEM.'configDB.php')){//se a configuração do banco não existir é iniciado o passo de instalação
+    
+    if(file_exists(BASEPATH.'autoload.php')){
+        try {
         
-    if(file_exists(BASEPATH.'autoload.php')){       
-        require_once (BASEPATH.'autoload.php');
-        //executa a classe autoload para captura das requisições enviada pela url
-        new autoload;      
+             require_once (BASEPATH.'autoload.php');
+             //executa a classe autoload para captura das requisições enviada pela url
+             new autoload;
+        }
+      catch (Exception $ex){
+            echo 'Falha no carregamento da página autoload!';
+      }
     }     
     else  
-      echo 'Falha no carregamento da p&aacute;gina autoload!';
-
-    
+        echo 'houve falha';
+    }
+    else {
+        require_once ('install/instaler.php');
+    }
