@@ -1,10 +1,6 @@
 <?php if(!defined('BASEPATH')) exit('Falha no carregamento do script!');
 
-$host = NULL;
-$port = NULL;
-$user = NULL;
-$senha = NULL; 
-$dbname = NULL;
+ 
 if(isset($_REQUEST['install'])){
 if(ini_get('allow_url_fopen') == 1){
       
@@ -12,12 +8,11 @@ if(ini_get('allow_url_fopen') == 1){
         
     
          if($fp){
-// Escreve "primeiro exemplo" no exemplo1.txt
         $escreve = fwrite($fp, 
 "<?php if(!defined('BASEPATH')) exit('Falha no carregamento do script!');
 
 /**
- * Description of config
+ * Description of configDB
  *
  * @author italo
  */
@@ -33,15 +28,16 @@ if(ini_get('allow_url_fopen') == 1){
 
         fclose($fp);
         
-            echo 'criado com sucesso!';
+            print 'criado com sucesso!';
+            redirecionar('action=index');
                  }
             else {
-          echo 'Falha ao tentar abrir arquivo!';    
+          print 'Falha ao tentar criar arquivo!';    
          }
  
     }
     else {
-           echo 'fopen desativo!';
+           print 'fopen desativo!';
         }
  }
  ?>
@@ -50,67 +46,43 @@ if(ini_get('allow_url_fopen') == 1){
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>Instalação phpIwork</title>
-<style type="text/css">
-body{ font-size:15px; font-family: cursive }
-h1{color:#0063DC }
-a { color:#3366FF}
-.sboxinstall {
-    background-color: rgba(0, 0, 11, 0.8);
-    background: rgba(0, 0, 11, 0.08);
-    color: rgba(0, 0, 15, 0.6);
-    
-    -moz-border-radius: 5px;
-    -webkit-border-radius: 5px;
-    border-radius: 5px;}
-.boxinstall{
-    background: rgba(0, 0, 100, 0.25);
-    
-    margin: 5% 35%;
-    width: 200px;
-    height: 250px; 
-    border:solid 1px #3366FF; 
-    padding:10px 50px 100px;
-    text-align:center;
-    
-    -moz-box-shadow: 5px  6px  33px  #3366FF;
-    -webkit-box-shadow: 5px  6px  33px  #3366FF;
-    box-shadow: 5px  6px  33px  #3366FF;
-    -moz-border-radius: 5px;
-    -webkit-border-radius: 5px;
-    border-radius: 5px;
-}
-
-.submit{
-
-    background: blue;
-    cursor: pointer;
-    width: 90px;
-    height: 20px; 
-    border:solid 1px #3366FF;
-    text-align:center;
-    font-size: 15px;
-    font-family: cursive;
-    -moz-box-shadow: 5px  6px  33px  #3366FF;
-    -webkit-box-shadow: 5px  6px  33px  #3366FF;
-    box-shadow: 5px  6px  33px  #3366FF;
-    -moz-border-radius: 5px;
-    -webkit-border-radius: 5px;
-    border-radius: 5px;
-}
-</style>
+<script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+<script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.js"></script>
+<script type="text/javascript">
+ $(function(){
+     $('#dadosDB').validate({
+         rules:{
+             host:{required: true},
+             port:{required: true},
+             user:{required: true},
+             senha:{required:true},
+             dbname:{required:true}
+         },
+         messages:{
+             host: "Preencha o campo HOST!",
+             port: "Preencha o campo PORTA!",
+             user: "Preenhca o campo USUARIO",
+             senha: "Preencha o campo SENHA",
+             dbname:"Preencha o campo DBNAME"
+         }
+     });
+ });
+</script>
 </head>
     <body>
         <h1>Instalando phpIwork...</h1>
-        <div class="boxinstall"> 
-            <h3>Passo 1</h3>
-            <form action="" method="POST">
-                Host:<br><input type="text" name="host" /><br>
-                Porta:<br><input type="text" name="port" /><br>
-                Usuario:<br><input type="text" name="user" /><br>
-                Senha:<br><input type="text" name="senha" /><br>
-                DbName:<br><input type="text" name="dbname" /><br>
-                <input type="submit" class="submit" name="install" value="Próximo" />
+        <div> 
+            <fieldset>
+            <legend>Informações da base de dados</legend>
+            <form action="" method="POST" id="dadosDB">
+                <label>Host:</label><br><input type="text" name="host" /><br>
+                <label>Porta:</label><br><input type="text" name="port" /><br>
+                <label>Usuario:</label><br><input type="text" name="user" /><br>
+                <label>Senha:</label><br><input type="text" name="senha" /><br>
+                <label>DbName:</label><br><input type="text" name="dbname" /><br>
+                <input type="submit" class=""   name="install" value="Próximo" />
             </form>
+            </fieldset>
         </div>
         
     </body>

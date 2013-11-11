@@ -3,7 +3,9 @@
 -->
 
 <h1>Primeira página com PHPIwork.</h1>
+<?php 
 
+?>
 <!--
 	Fim de conteúdo
 -->
