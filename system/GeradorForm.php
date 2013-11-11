@@ -47,6 +47,33 @@ class GeradorForm{
         $this->campos .= "{$label}\n<input name={$name} type={$tipo} {$value} {$onClick} />\n";
     }
     
+    public function searchType($type){
+        if(strpos($type, 'varchar') > 0){
+            $retorno_type = "text";
+        }
+        else if(strpos($type, 'int') > 0){
+            $retorno_type = "number";
+        }
+        return  $retorno_type;
+    }
+    
+    public function addCampoDinamic($tabela,$endl=FALSE){
+        $_tb = new crud();
+        $ret = $_tb->consultarNometb($tabela);
+        foreach ($ret as $array) {
+           if($array['Extra'] != "auto_increment"){
+               $name = $array['Field'];
+               $tipo = $this->searchType($array['Type']);
+               $label = $name;
+               $this->addCampo($name, $tipo, $label,NULL,NULL,$endl);
+           }
+        }
+        
+        $label = $label   != NULL  ? "\n<label for='{$name}'>{$label}</label>" : '';
+        
+        return  $this->campos .= "{$label}\n<input name={$name} type={$tipo}  />\n";
+    }
+    
 
       public function show(){
       $form .=  $this->abrirForm();

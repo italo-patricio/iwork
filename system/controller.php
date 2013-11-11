@@ -8,6 +8,7 @@
 require_once (BASESYSTEM.'configDB.php');
 require_once (BASESYSTEM.'core.php');
 require_once (BASEMODEL.'crud.php');
+require_once (BASESYSTEM.'GeradorForm.php');
 
 class controller extends configDB{
 //variável $val é utilizada para passar parâmetros para a view requisitada

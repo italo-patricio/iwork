@@ -4,7 +4,12 @@
 
 <h1>Primeira página com PHPIwork.</h1>
 <?php 
-
+$array = array('method'=>'post');
+$form = new GeradorForm($array);
+$form->addCampo('nome','text','Nome:');
+$form->addCampo('idade','number','Idade:');
+$form->addCampo('bt','submit','','Submeter');
+$form->show();
 ?>
 <!--
 	Fim de conteúdo

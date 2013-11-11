@@ -1,6 +1,10 @@
 <?php if(!defined('BASEPATH')) exit('Falha no carregamento do script!');
 
- 
+ $host = NULL;
+$port = NULL;
+$user = NULL;
+$senha = NULL; 
+$dbname = NULL;
 if(isset($_REQUEST['install'])){
 if(ini_get('allow_url_fopen') == 1){
       
