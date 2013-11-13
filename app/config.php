@@ -6,6 +6,9 @@ return array(
         'name'=>'Nome do projeto',
         'defaultController'=>'site',
         'defaultAction'=>'index',
+        'import'=>array(
+			APPMODELS
+        ),
         'mysql' => array(
 			'address'  => 'localhost',
 			'driver'   => 'mysql',
