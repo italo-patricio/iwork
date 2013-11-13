@@ -1,15 +1,5 @@
-
-
 <IfModule mod_rewrite.c>
-
-RewriteEngine on
-
-RewriteCond %{SCRIPT_FILENAME} !-f
-RewriteCond %{SCRIPT_FILENAME} !-d
-
-RewriteRule ^(.*)$ index.php [L,QSA]  
-#DirectoryIndex index.php
-
-
+    RewriteEngine on
+    RewriteRule    ^$    public/    [L]
+    RewriteRule    (.*) public/$1    [L]
 </IfModule>
-
