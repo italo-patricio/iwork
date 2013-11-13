@@ -1,8 +1,10 @@
 <?php
 
 // Carregando os arquivos do sistema
-require_once(BASESYSTEM.'iModel.php');
+require_once(BASESYSTEM.'iAutoloader.php');
 require_once(BASESYSTEM.'iController.php');
+require_once(BASESYSTEM.'iModel.php');
+require_once(BASESYSTEM.'iView.php');
 require_once(BASESYSTEM.'iUtils.php');
 
 
@@ -10,27 +12,18 @@ class iWork {
 	
 	private $_controller = null;
 	
-	private $_action = null;
+	private $_action     = null;
 	
-	private $_params = array();
+	private $_params     = array();
 	
-	private $_config = null;
+	private $_config     = null;
+
+	private static $_dispatchMap = array();
+	
+	private static $_application = null;
 
 
-	
-	/**
-	 * 
-	 */
-	public function __construct($config) 
-	{
-		$this->_config = require($config);	 // Carregando a configuração para a classe
-	
-		$this->urlManager();                 // Reconhece o controller e action
 		
-		$this->load();                       // Carrega o contrller e action
-	}
-	
-	
 	/**
 	 * index.php?url=
 	 * link/controller/action/params
@@ -45,27 +38,27 @@ class iWork {
 			
 			// Defindo o 'controller' e a 'action'
 			$this->_controller = (isset($url[0])) ? $url[0] : $this->_config['defaultController'];
-			$this->_action     = (isset($url[1])) ? $url[1] : $this->_config['defaultAction'];			
+			$this->_action     = (isset($url[1])) ? $url[1] : $this->_config['defaultAction'];
 			
 			// Definindo os 'params'
 			if (count($url) >= 3)
 			{
-				array_shift($url); // removendo o controller 
-				array_shift($url); // removendo a action
-				$this->_params = $url;
+				array_shift($url);     // removendo o controller
+				array_shift($url);     // removendo a action
+				$this->_params = $url; // carregando os parâmetros
 			}
 			
 			//print_r($url);
 		}
-		else 
+		else
 		{
 			$this->_controller = $this->_config['defaultController'];
 			$this->_action     = $this->_config['defaultAction'];
 		}
 		
-		print_r($this->_controller.'<br>');
-		print_r($this->_action.'<br>');
-		print_r($this->_params);
+		//print_r($this->_controller.'<br>');
+		//print_r($this->_action.'<br>');
+		//print_r($this->_params);
 		
 	}
 	
@@ -78,20 +71,24 @@ class iWork {
 		$modelName      = rtrim(ucwords($this->_controller), 's');  // Index          , Login
 	
 		
-		if(file_exists(BASEAPP.'controller/'.$controllerName.'.php'))
+		if(file_exists(APPCONTROLLERS.$controllerName.'.php'))
 		{
-			require_once(BASEAPP.'controller/'.$controllerName.'.php');
+			require_once(APPCONTROLLERS.$controllerName.'.php');
 			
 			if (class_exists($controllerName))
 			{
 				
 				if (method_exists($controllerName, $actionName))
 				{
-					// Inicia o controller
-					$dispatch = new $controllerName($this->_controller, $this->_action, $modelName);
-
+					
+					if(!isset(self::$_dispatchMap[$controllerName]))
+					{
+						// Inicia o controller (dispatch)
+						self::$_dispatchMap[$controllerName] = new $controllerName($this->_controller, $modelName, $this->_config['mysql']);
+					}
+					
 					// A função recebera como parâmetro um array passado pela url
-					call_user_func_array(array($dispatch, $actionName), $this->_params);
+					call_user_func_array(array(self::$_dispatchMap[$controllerName], $actionName), $this->_params);
 				} 
 				else 
 				{
@@ -110,10 +107,51 @@ class iWork {
 			// Comentário para dev, em production redirecionar para página 404
 			echo utf8_decode('<h2>O arquivo "app/controller/'.$controllerName.'.php" não existe!</h2>');
 		}
+		
+		// lista a dispatcmath
+		//print_r(self::$_dispatchMap);
 	}
+	
+	private function import()
+	{
+		if (isset($this->_config['import']))
+		{
+			foreach($this->_config['import'] as $value)
+			{
+				// Register the directory to your include files
+				iAutoloader::registerDirectory($value);
+			}
+		}
+	}
+	
 	
 	/**
 	 * 
+	 */
+	public function run($config) 
+	{
+		$this->_config = require($config);	 // Carregando a configuração para a classe
+			
+		$this->urlManager();                 // Reconhece o controller e action
+		
+		$this->import();                     // Importa arquivos
+		
+		$this->load();                       // Carrega o contrller e action
+	}
+	
+	public static function createApplication()  // funciona????
+	{
+		if(self::$_application == null)
+		{
+			self::$_application = new iWork();
+		}
+		return self::$_application;
+	} 
+	
+	
+	
+	/**
+	 *
 	 *
 	private function getController()
 	{			
