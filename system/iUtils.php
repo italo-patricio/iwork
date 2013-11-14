@@ -14,6 +14,11 @@ class iUtils
 		return $this->config;
 	}
 	
+	public static function createUrl($var)
+	{
+		return 'localhost'.$var;
+	}
+	
 	
 }/*
   function loadCss($arquivoCss){ 

@@ -4,12 +4,13 @@
 // USAR PDO PARA PODER UTILIZAR MYSQL E POSTGRE
 
 class iModel {
+
+    private static $_instance = null;
 	
 	private $_config;
 	
     protected $_model;
     
-    protected $_instance;
 
     protected $_result;
     
@@ -23,10 +24,12 @@ class iModel {
 		//$this->connect();
 	}
 	
-	public function inserir()
-	{
-		echo 'inserir';
-	}
+	//private static function getDB()
+	//{
+	//	if (self::$_instance === null)
+	//		self::$_instance = new i
+	//	return self::$_instance;
+	//}
 	
 	/*
 	public function connect() 

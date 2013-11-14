@@ -1,11 +1,20 @@
 <?php
 
+// Defindo os caminhos
+define('BASEAPP'       , PATH.'app/');
+define('APPCONTROLLERS', PATH.'app/controllers/');
+define('APPMODELS'     , PATH.'app/models/');
+define('APPVIEWS'      , PATH.'app/views/');
+define('BASESYSTEM'    , PATH.'system/');
+
+
 // Carregando os arquivos do sistema
 require_once(BASESYSTEM.'iAutoloader.php');
 require_once(BASESYSTEM.'iController.php');
 require_once(BASESYSTEM.'iModel.php');
 require_once(BASESYSTEM.'iView.php');
 require_once(BASESYSTEM.'iUtils.php');
+
 
 
 class iWork {
@@ -17,8 +26,6 @@ class iWork {
 	private $_params     = array();
 	
 	private $_config     = null;
-
-	private static $_dispatchMap = array();
 	
 	private static $_application = null;
 
@@ -29,7 +36,7 @@ class iWork {
 	 * link/controller/action/params
 	 */
 	public function urlManager()
-	{
+	{		
 		if (isset($_GET['url']))
 		{
 			// Quebrando a url recebida
@@ -38,10 +45,10 @@ class iWork {
 			
 			// Defindo o 'controller' e a 'action'
 			$this->_controller = (isset($url[0])) ? $url[0] : $this->_config['defaultController'];
-			$this->_action     = (isset($url[1])) ? $url[1] : $this->_config['defaultAction'];
+			$this->_action     = (isset($url[1])) ? (($url[1] == '' || $url[1] == null) ? $this->_config['defaultAction'] : $url[1] ) : $this->_config['defaultAction'];
 			
 			// Definindo os 'params'
-			if (count($url) >= 3)
+			if (count($url) > 2)
 			{
 				array_shift($url);     // removendo o controller
 				array_shift($url);     // removendo a action
@@ -81,14 +88,10 @@ class iWork {
 				if (method_exists($controllerName, $actionName))
 				{
 					
-					if(!isset(self::$_dispatchMap[$controllerName]))
-					{
-						// Inicia o controller (dispatch)
-						self::$_dispatchMap[$controllerName] = new $controllerName($this->_controller, $modelName, $this->_config['mysql']);
-					}
+					$dispatch = new $controllerName($this->_controller, $modelName, $this->_config);
 					
 					// A função recebera como parâmetro um array passado pela url
-					call_user_func_array(array(self::$_dispatchMap[$controllerName], $actionName), $this->_params);
+					call_user_func_array(array($dispatch, $actionName), $this->_params);
 				} 
 				else 
 				{
@@ -118,8 +121,20 @@ class iWork {
 		{
 			foreach($this->_config['import'] as $value)
 			{
+				$temp = explode('.', $value);
+				
+				switch($temp[0])
+				{
+					case 'application': $temp[0] = BASEAPP;     break;
+					case 'system'     : $temp[0] = BASESYSTEM;  break;
+				}
+								
+				$temp = implode('/', $temp);
+				
+				//echo $temp;		 
+				
 				// Register the directory to your include files
-				iAutoloader::registerDirectory($value);
+				iAutoloader::registerDirectory($temp);
 			}
 		}
 	}
@@ -130,7 +145,7 @@ class iWork {
 	 */
 	public function run($config) 
 	{
-		$this->_config = require($config);	 // Carregando a configuração para a classe
+		$this->_config = require_once($config);	 // Carregando a configuração para a classe
 			
 		$this->urlManager();                 // Reconhece o controller e action
 		
@@ -139,6 +154,7 @@ class iWork {
 		$this->load();                       // Carrega o contrller e action
 	}
 	
+	
 	public static function createApplication()  // funciona????
 	{
 		if(self::$_application == null)
@@ -146,9 +162,8 @@ class iWork {
 			self::$_application = new iWork();
 		}
 		return self::$_application;
-	} 
-	
-	
+	}
+
 	
 	/**
 	 *
