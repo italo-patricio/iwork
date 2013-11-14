@@ -1,20 +1,19 @@
 <?php
 
 // Configuração da aplicação
-
 return array(
-        'name'=>'Nome do projeto',
-        'defaultController'=>'site',
-        'defaultAction'=>'index',
-        'import'=>array(
-			APPMODELS
+        'name' => 'Nome do projeto',
+        'defaultController' => 'site',
+        'defaultAction' => 'index',
+        'import' => array(
+			'application.models',
+			'system.widgets',
         ),
         'mysql' => array(
 			'address'  => 'localhost',
-			'driver'   => 'mysql',
-			'port'     => 1212,
-			'username' => 'root',
-			'password' => '!@#',
+			'port'     => 0000,
+			'username' => 'usuario',
+			'password' => 'senha',
 			'dbname'   => 'nomedobanco'
         )
 );
