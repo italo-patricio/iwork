@@ -1,21 +1,16 @@
  <?php
  
 	// @see http://codexico.com.br/blog/linux/tutorial-simples-como-usar-o-git-e-o-github
+	// @see http://www.php.net/manual/en/refs.basic.vartype.php
  
 	error_reporting(E_ALL);
 	ini_set('display_errors','On');
 	
-	define('DS', DIRECTORY_SEPARATOR);
+	define('PATH', dirname(__FILE__).'/../');
 	
-	define('BASEPATH'  , dirname(__FILE__) . DS . '..' . DS);
-	define('BASEAPP'   , BASEPATH.'app' . DS);
-		define('APPCONTROLLERS', BASEAPP.'controllers'.DS);
-		define('APPMODELS', BASEAPP.'models'.DS);
-		define('APPVIEWS', BASEAPP.'views'.DS);
-    define('BASESYSTEM', BASEPATH.'system' . DS);
-    
-    
-    require_once(BASESYSTEM.'iWork.php');
-    $config = BASEAPP.'config.php';
-    
-    iWork::createApplication()->run($config);
+	$iwork  = dirname(__FILE__).'/../system/iWork.php';
+	$config = dirname(__FILE__).'/../app/config.php';
+	
+	require_once($iwork);
+	
+	iWork::createApplication()->run($config);
