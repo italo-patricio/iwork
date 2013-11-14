@@ -5,7 +5,7 @@ class SiteController extends iController
 	
 	public function indexAction()
 	{
-		echo 'Vá para link/pagina';
+		//$this->layout = 'index';
+		$this->render('index',array());
 	}
-	 
 }
