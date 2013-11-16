@@ -10,7 +10,6 @@ class iModel {
 	private $_config;
 	
     protected $_model;
-    
 
     protected $_result;
     

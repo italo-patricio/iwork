@@ -9,16 +9,16 @@ class iController
 	protected $layout = 'default';
 	
 	
-	public function __construct($controller, $model, $config) 
+	public function __construct($controller, $model) 
 	{
 		$this->_controller = $controller;
-		$this->model = new $model($config['mysql']);               // Carregando o model
+		//$this->model = new $model($config['mysql']);               // Carregando o model
 	}
 	
 	
 	protected function render($nameView, array $params = array())
 	{
-		iView::render($this->_controller, $nameView, $this->layout, $params);
+		iView::render($this->_controller, $nameView, $params, $this->layout);
     }
 	
 }

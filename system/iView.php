@@ -2,7 +2,7 @@
 
 class iView
 {
-	public static function render($controller, $action, $layout, $params)
+	public static function render($controller, $action, $params, $layout)
 	{
 		if(file_exists(APPVIEWS.$controller.'/'.$action.'.php'))
 		{
