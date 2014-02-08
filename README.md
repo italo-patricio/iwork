@@ -24,7 +24,10 @@ Iwork
 
 
 
-Iwork 
-Desenvolvido por Ítalo Patrício Cordeiro de Souza
-Bacharelando do curso de Ciência e Tecnologia
+###Desenvolvido por 
+
+Ítalo Patrício Cordeiro de Souza
+
+Bacharelando no curso de Ciência e Tecnologia
+
 Técnico em Desenvolvimento de sistemas para internet
