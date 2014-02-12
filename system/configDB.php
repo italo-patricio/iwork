@@ -12,5 +12,5 @@
             protected $db_port ='3306';
             protected $db_user = 'root';
             protected $db_senha = '';
-            protected $db_name = 'reabilitacaomaxilar';
+            protected $db_name = 'nome_do_seu_banco';
    }
