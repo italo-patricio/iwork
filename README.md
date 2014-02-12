@@ -1,7 +1,7 @@
 Iwork
 =====
 
-###Programas necessários para instalação do reMax
+###Programas necessários para instalação do Iwork
 
 1- Servidor apache com PHP obs.:  PHP 5.3 ou superior;
 
