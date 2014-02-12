@@ -22,6 +22,7 @@ Iwork
 
 4- Coloque o código fonte no servidor;
 
+5- [OPCIONAL] Altere o conteudo da variável url_base, inserindo o nome da pasta do projeto caso seja modificado. 
 
 
 ###Desenvolvido por 
