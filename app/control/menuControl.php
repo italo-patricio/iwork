@@ -1,8 +1,7 @@
 <?php  if(!defined('BASEPATH')) exit(header('Location: ./../../index.php'));
-//seguranca_arq();
 /**
  * Description of menuControl
- * Serve para carregar exibir as view's
+ * Serve para exibir as view's
  * @author italo
  */
 
@@ -48,6 +47,8 @@ class menu extends controller {
         
        $this->view('teste', $this->res);  
     }
+    
+
 }
 
 

@@ -10,7 +10,7 @@ class core extends controller{
         
     }
 
-        public function seguranca_arq(){
+        public static function seguranca_arq(){
         if(isset($_SESSION['session']['logado'])){//verifica se usuario está logado e para verificar se ele tem acesso a página
             
         }
@@ -21,17 +21,17 @@ class core extends controller{
         
         
     }
-    public function startCookie($name,$value,$expire){
+    public static function startCookie($name,$value,$expire){
        #Inicia o cookie
         setcookie($name, $value, $expire);
    
    }
-   public function stopCookie($name){
+   public static function stopCookie($name){
        #Encerra o cookie
         setcookie($name,NULL,-1);
    } 
    //criar sessão NÃO FOI TOTALMENTE TESTADO FUNCIONAMENTO INCERTO
-   public function startSession($nomeDaSessao=NULL,$time=30,$cache_limiter='private'){
+   public static function startSession($nomeDaSessao=NULL,$time=30,$cache_limiter='private'){
           /* Define o limitador de cache para 'private' */
           session_cache_limiter($cache_limiter);
 
@@ -57,7 +57,7 @@ class core extends controller{
   }
    
   //carrega todos os Css's de uma pasta  
-  public function allLoadCss($path){
+  public static function allLoadCss($path){
       
     $diretorio = dir($path);
 
@@ -70,7 +70,7 @@ class core extends controller{
 
   }
   //carrega todos os Js's de uma pasta  
-  public function allLoadJs($path){
+  public static function allLoadJs($path){
       
     $diretorio = dir($path);
 
@@ -83,7 +83,7 @@ class core extends controller{
 
   }  
   //carrega o Css  
-  public function loadCss($arquivoCss,$base=NULL){
+  public static function loadCss($arquivoCss,$base=NULL){
       $base = $base!=NULL ? $base : BASECSS;
         if(file_exists($base.$arquivoCss.'.css')) 
         return print ('<link  rel="stylesheet" href="'.BARRA.url_base.BARRA.$base.$arquivoCss.'.css" type="text/css" />');
@@ -91,7 +91,7 @@ class core extends controller{
         return print ("Falha no carregamento do arquivo {$arquivoCss}.css");
   }
   //carrega o js 
-  public function loadJs($arquivoJs,$base=NULL){ 
+  public static function loadJs($arquivoJs,$base=NULL){ 
     $base = $base!=NULL ? $base : BASEJS;
      if(file_exists($base.$arquivoJs.'.js')) 
      return print ('<script  src="'.BARRA.url_base.BARRA.$base.$arquivoJs.'.js" type="text/javascript" ></script>');
@@ -99,11 +99,11 @@ class core extends controller{
      return print ("Falha no carregamento do arquivo {$arquivoJs}.js");
   }
   //redireciona
-  public function redirecionar($local=null){
+  public static function redirecionar($local=null){
            header('location:  /'.url_base.BARRA.$local);
     }
  
-  public function allLoadArq($path, $arq=NULL, $ext=NULL){
+  public static function allLoadArq($path, $arq=NULL, $ext=NULL){
       $ext = $ext ==NULL ? ".php" : $ext ;
       $require = NULL;
       
@@ -129,7 +129,7 @@ class core extends controller{
 
 
     /**----------Criar mensagens-----------**/
-   public function msg($tipo,$msg){
+   public static function msg($tipo,$msg){
      switch ($tipo) {
          case '1':
              $tipoMsg = 'success';
@@ -151,7 +151,7 @@ class core extends controller{
  }
  
  /*------------------Gerador de CRUD de acordo com modelagem------------------*/
-  public function syncdb(){
+  public static function syncdb(){
        #$crud = new crud();
        
        $TbName = array(); //armazena os nomes das tabelas existentes no banco pre configurado no configDB
