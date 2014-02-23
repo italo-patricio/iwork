@@ -10,6 +10,7 @@
        if(isset($titulo) && $titulo !=NULL);
        else $titulo = 'sem titulo';
 
+ $core = new core();      
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -25,13 +26,15 @@
 
     <!-- Carrega todos os CSS's -->
     <?php
-        allLoadCss(BASECSS);
+       $core->allLoadCss(BASECSS);
     ?>
     
     
     <!-- Bootstrap core JavaScript
     ================================================== -->
-    <?php allLoadJs(BASEJS); ?>
+    <?php 
+        $core->allLoadJs(BASEJS);
+    ?>
  
   </head>
 

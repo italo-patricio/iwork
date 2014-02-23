@@ -9,6 +9,9 @@ session_start();
 require_once (BASESYSTEM.'core.php');
 require_once (BASESYSTEM.'crud.php');
 
+$core = new core();
+$core->allLoadArq(BASEMODELCLASS);
+$core->allLoadArq(BASEMODELDAO);
 
 class controller{
    //protected $crud ;

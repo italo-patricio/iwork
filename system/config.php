@@ -16,6 +16,9 @@ define('PAGEBASE', 'base');
     define('BASESYSTEM', 'system/');
     define('BASEVIEW', 'app/view/');
     define('BASECONTROL', 'app/control/');
+    define('BASEMODELCLASS', 'app/model/class/');
+    define('BASEMODELDAO', 'app/model/dao/');
+    
     define('BASEVIEWINC', BASEVIEW.'includes/');
     define('TEMPLATE_BASE', BASEVIEWPAGEMASTER.'base.php');
     /**opcional*/

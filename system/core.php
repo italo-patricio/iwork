@@ -4,8 +4,13 @@
  *
  * @author italo
  */
+class core extends controller{
+    
+    public  function __construct() {
+        
+    }
 
-function seguranca_arq(){
+        public function seguranca_arq(){
         if(isset($_SESSION['session']['logado'])){//verifica se usuario está logado e para verificar se ele tem acesso a página
             
         }
@@ -16,17 +21,17 @@ function seguranca_arq(){
         
         
     }
-   function startCookie($name,$value,$expire){
+    public function startCookie($name,$value,$expire){
        #Inicia o cookie
         setcookie($name, $value, $expire);
    
    }
-   function stopCookie($name){
+   public function stopCookie($name){
        #Encerra o cookie
         setcookie($name,NULL,-1);
    } 
    //criar sessão NÃO FOI TOTALMENTE TESTADO FUNCIONAMENTO INCERTO
-   function startSession($nomeDaSessao=NULL,$time=30,$cache_limiter='private'){
+   public function startSession($nomeDaSessao=NULL,$time=30,$cache_limiter='private'){
           /* Define o limitador de cache para 'private' */
           session_cache_limiter($cache_limiter);
 
@@ -44,7 +49,7 @@ function seguranca_arq(){
           session_start();     
        }//
        
-  function stopSession($nomeDaSessao = NULL){
+   public function stopSession($nomeDaSessao = NULL){
           if($nomeDaSessao==NULL)
               session_destroy();
           else 
@@ -52,33 +57,33 @@ function seguranca_arq(){
   }
    
   //carrega todos os Css's de uma pasta  
-  function allLoadCss($path){
+  public function allLoadCss($path){
       
     $diretorio = dir($path);
 
     while($arquivo = $diretorio -> read()){
        //verifica apenas as extenções do css 
-        if(strpos($arquivo, '.css')!==FALSE)
+        if(strpos($arquivo, '.css'))
           echo ("<link  rel='stylesheet' href='".BARRA.url_base.BARRA.$path.$arquivo."' type='text/css' />\n");
     }
     $diretorio -> close();
 
   }
   //carrega todos os Js's de uma pasta  
-  function allLoadJs($path){
+  public function allLoadJs($path){
       
     $diretorio = dir($path);
 
     while($arquivo = $diretorio -> read()){
-       //verifica apenas as extenções do css 
-        if(strpos($arquivo, '.js')!==FALSE)
+       //verifica apenas as extenções do js 
+        if(strpos($arquivo, '.js'))
           echo ("<script  src='".BARRA.url_base.BARRA.$path.$arquivo."' type='text/javascript'></script>\n");
     }
     $diretorio -> close();
 
   }  
   //carrega o Css  
-  function loadCss($arquivoCss,$base=NULL){
+  public function loadCss($arquivoCss,$base=NULL){
       $base = $base!=NULL ? $base : BASECSS;
         if(file_exists($base.$arquivoCss.'.css')) 
         return print ('<link  rel="stylesheet" href="'.BARRA.url_base.BARRA.$base.$arquivoCss.'.css" type="text/css" />');
@@ -86,7 +91,7 @@ function seguranca_arq(){
         return print ("Falha no carregamento do arquivo {$arquivoCss}.css");
   }
   //carrega o js 
-  function loadJs($arquivoJs,$base=NULL){ 
+  public function loadJs($arquivoJs,$base=NULL){ 
     $base = $base!=NULL ? $base : BASEJS;
      if(file_exists($base.$arquivoJs.'.js')) 
      return print ('<script  src="'.BARRA.url_base.BARRA.$base.$arquivoJs.'.js" type="text/javascript" ></script>');
@@ -94,12 +99,37 @@ function seguranca_arq(){
      return print ("Falha no carregamento do arquivo {$arquivoJs}.js");
   }
   //redireciona
-  function redirecionar($local=null){
+  public function redirecionar($local=null){
            header('location:  /'.url_base.BARRA.$local);
     }
+ 
+  public function allLoadArq($path, $arq=NULL, $ext=NULL){
+      $ext = $ext ==NULL ? ".php" : $ext ;
+      $require = NULL;
+      
+      if($arq==NULL){
+        
+       $diretorio = dir($path);
 
-/**----------Criar mensagens-----------**/
- function msg($tipo,$msg){
+            while ($arquivo = $diretorio->read()){   
+                
+                     if(strpos($arquivo, $ext)){
+                         #echo "{$arquivo} Incluido!<br>";
+                         require_once ($path.$arquivo);
+                     }
+            }
+       $diretorio->close();
+      }
+      else{
+         if(file_exists($path.$arq.$ext)) 
+             require_once ($path.$arq.$ext);
+      }
+
+   } 
+
+
+    /**----------Criar mensagens-----------**/
+   public function msg($tipo,$msg){
      switch ($tipo) {
          case '1':
              $tipoMsg = 'success';
@@ -119,3 +149,183 @@ function seguranca_arq(){
      } 
     $_SESSION['msg'] = array('tipo'=>$tipoMsg,'texto'=>$msg);  
  }
+ 
+ /*------------------Gerador de CRUD de acordo com modelagem------------------*/
+  public function syncdb(){
+       #$crud = new crud();
+       
+       $TbName = array(); //armazena os nomes das tabelas existentes no banco pre configurado no configDB
+       //var_dump($tables[0]);
+       $ColName = array();//armazena os nomes das colunas de cada tabela
+       foreach (crud::consultarNometb() as $value) {
+           foreach ($value as $val){
+               $TbName[] = $val;
+           }
+       }
+       foreach ($TbName as $value){
+           $ColName[$value] = crud::consultarNomeColuna($value); 
+       }
+       //var_dump($ColName);
+       
+       foreach ($ColName as $key => $value) {
+           ///echo "<b>Tabela:{$key}</b><br>";
+           #foreach ($value as $k => $val) {
+               //echo "Coluna[$k]:{$val['Field']}<br>";
+                 $arquivoClass = fopen(BASEMODELCLASS.BARRA.$key.'Class.php', 'w+');
+                 if($arquivoClass){
+                    if (fwrite($arquivoClass, $this->gerarModelClass($key, $value))){
+                        echo "Arquivo {$key}Class criado com sucesso!\n<br>";
+                    }
+                    else{
+                        echo "Falha ao criar arquivo {$key}Class !\n<br>";    
+                    }
+                    fclose($arquivoClass);
+                 }  
+                 $arquivoDao = fopen(BASEMODELDAO.BARRA.$key.'Dao.php', 'w+');
+                 if($arquivoDao){
+                    if (fwrite($arquivoDao, $this->gerarModelDao($key, $value))){
+                        echo "Arquivo {$key}Dao criado com sucesso!\n<br>";
+                    }
+                    else{
+                        echo "Falha ao criar arquivo {$key}Dao !\n<br>";    
+                    }
+                    fclose($arquivoDao);
+                  }
+      }
+       
+       
+     
+    }
+    private function gerarModelDao($tabela,$atributos){
+        $conteudoDao = 
+                "<?php "
+              . "\n  /* Código Gerado pelo Iwork"
+              . "\n     @author Ítalo Patrício "
+              . "\n  */"
+              . "\n class {$tabela}Dao extends controller {\n"
+              . "\n"
+              . $this->gerarMethodCreate($tabela, $atributos)
+              . $this->gerarMethodRead($tabela, $atributos)
+              . $this->gerarMethodUpdate($tabela, $atributos)
+              . $this->gerarMethodDelete($tabela, $atributos)
+              . "\n}"
+            ;
+            return $conteudoDao;      
+    }
+    private function gerarMethodCreate($tabela,$atributos){
+        $atributosCreate = '';
+        foreach ($atributos as $value){
+            $atributosCreate .= "\n\t \$create ['{$value['Field']}'] = \${$tabela}->get{$value['Field']}();";
+        }
+           $conteudoCreate = 
+                "\n\t #função para criar {$tabela} "
+              . "\n\t public function create(\${$tabela}){"
+              . "\n\t \$create = array();"
+              . $atributosCreate
+              . "\n\t return crud::inserir(\$create,'{$tabela}');"
+              . "\n\t }"        
+           ;
+         return $conteudoCreate;       
+    }
+
+    private function gerarMethodRead($tabela,$atributos){
+        $atributosWhereRead ='';
+        $arrayRead  = array();
+        $whereRead = '';
+        foreach ($atributos as $value){
+          $atributosWhereRead .= "\n\t \$where_{$value['Field']} = \${$tabela}->get{$value['Field']}() == NULL ? '' : \" {$value['Field']}='{\${$tabela}->get{$value['Field']}()}'\" ;";
+          $arrayRead[] = "\$where_{$value['Field']}";
+          
+        }
+       $whereRead = implode(',',$arrayRead);
+        $conteudoRead =
+                "\n\t #função para consultar {$tabela}"
+              . "\n\t public function read(\${$tabela},\$or=FALSE){"
+              . "\n"
+              . $atributosWhereRead
+              . "\n\t \$array = array({$whereRead});"
+              . "\n\t \$cont = 0;"
+              . "\n\t \$where = '';"
+              . "\n\t \$and_or = \$or ? '  OR  ' : '  AND  ';"
+              . "\n\t foreach (\$array as \$value){"
+              . "\n\t   if(\$cont > 0 && \$value!=''){"
+              . "\n\t      \$where .= \$and_or.\$value;"
+              . "\n\t   }"
+              . "\n\t   else if(\$value!=''){"
+              . "\n\t       \$where .=\$value;"
+              . "\n\t       \$cont+=1;"
+              . "\n\t   }"
+              . "\n\t }"
+              . "\n"
+              . "\n\t return crud::consultar(array('*'),'{$tabela}', \$where, TRUE);"
+              . "\n\t }"
+            ;
+      return $conteudoRead;       
+    }
+    private function gerarMethodUpdate($tabela,$atributos){
+        $whereUpdate ='';
+        foreach ($atributos as $value){
+           if($value['Key']=='PRI')
+           $whereUpdate .= "\n\t   \$where_pk_id = \${$tabela}->get{$value['Field']}();";  
+           else    
+           $whereUpdate .= "\n\t   if(\${$tabela}->get{$value['Field']}() != NULL) \$update['{$value['Field']}'] = \${$tabela}->get{$value['Field']}();"; 
+        }
+        $conteudoUpdate = 
+                  "\n\t #função para atualizar {$tabela}"
+                . "\n\t public function update(\${$tabela}){ "
+                . "\n\t  \$update = array();"
+                . "\n"
+                . $whereUpdate
+                . "\n"
+                . "\n\t return crud::atualizar('{$tabela}', \$update, \$where_pk_id);"
+                . "\n\t }"
+            ;
+     return $conteudoUpdate;          
+    }
+    
+    private function gerarMethodDelete($tabela,$atributos){
+        $whereUpdate = ''; 
+        foreach ($atributos as $value){
+           if($value['Key']=='PRI')
+           $whereUpdate .= "\n\t   \$where_pk_id = \${$tabela}->get{$value['Field']} == NULL ? '' : \" {$value['Field']}='{\${$tabela}->get{$value['Field']}}' \" ;";  
+         }
+        $conteudoDelete = 
+                  "\n\t #função para excluir {$tabela} por pk "
+                . "\n\t public function delete(\${$tabela}){"
+                . $whereUpdate
+                . "\n\t return crud::deletar('{$tabela}', \$where_pk_id);"
+                . "\n\t }"
+            ;
+      return $conteudoDelete; 
+    }
+    private function gerarModelClass($tabela, $atributos){
+        
+        $conteudoAtributos = "\n\t #Atributos\n";
+        $conteudoGetSet = "\n\t #Propriedades dos atributos";
+        
+        foreach ($atributos as $value) {
+            $conteudoAtributos .="\n\t private \${$value['Field']};";
+            $conteudoGetSet .= 
+              "\n\t public function set{$value['Field']}(\${$value['Field']}){\n"
+            . "\t   \$this->{$value['Field']}=\${$value['Field']};"
+            . "\n\t }"
+            . "\n\t public function get{$value['Field']}(){\n"
+            . "\t   return \$this->{$value['Field']};"
+            . "\n\t }";
+           
+        }
+        
+        
+        $conteudoClass = "<?php"
+                . "\n  /* Código Gerado pelo Iwork"
+                . "\n     @author Ítalo Patrício "
+                . "\n  */"
+                . "\n class {$tabela}Class extends controller {\n"
+                . "{$conteudoAtributos}"
+                . "\n{$conteudoGetSet}"
+                . "\n}"
+            ;
+       return $conteudoClass;
+    }
+ 
+} 

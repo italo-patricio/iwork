@@ -41,15 +41,33 @@
            
         }
         
-        public static function consultarNometb($tabela){
+        public static function consultarNomeColuna($tabela){
            
             $query = "SHOW COLUMNS FROM {$tabela}";
             
              try{
-               #if(empty(static::$pdo))
+               if(empty(static::$pdo))
                    $result = static::conectar()->query($query)->fetchAll(PDO::FETCH_ASSOC);
-               #else
-               #$result = static::$pdo->query($query)->fetchAll(PDO::FETCH_ASSOC);
+               else
+               $result = static::$pdo->query($query)->fetchAll(PDO::FETCH_ASSOC);
+
+              }
+              catch (PDOException $e) {
+                 echo 'Erro: '.$e->getMessage();
+              $result = -1;
+              }
+            
+            return $result;
+        }
+        public static function consultarNometb(){
+           
+            $query = "SHOW TABLES ";
+            
+             try{
+               if(empty(static::$pdo))
+                   $result = static::conectar()->query($query)->fetchAll(PDO::FETCH_ASSOC);
+               else
+               $result = static::$pdo->query($query)->fetchAll(PDO::FETCH_ASSOC);
 
               }
               catch (PDOException $e) {
@@ -94,8 +112,10 @@
            return $result; 
         }
         
-        public static function consultar(array $select, $tabela, $where = null, $order = null, $limit = null){
+        public static function consultar(array $select, $tabela, $where = null,$returnObject = FALSE , $order = null, $limit = null){
             $where = ($where == null) ? null : "WHERE {$where}";
+            $fetch = ($returnObject) ?  PDO::FETCH_OBJ : PDO::FETCH_ASSOC; 
+            
             if($select != "*"){
                 $select = implode(", ", $select);
             } else {
@@ -109,9 +129,9 @@
             
              try{
                  if(empty(static::$pdo))
-                  $result = static::conectar()->query($query)->fetchAll(PDO::FETCH_ASSOC);
+                  $result = static::conectar()->query($query)->fetchAll($fetch);
                  else
-                  $result = static::$pdo->query($query)->fetchAll(PDO::FETCH_ASSOC);
+                  $result = static::$pdo->query($query)->fetchAll($fetch);
               }
               catch (PDOException $e) {
                  echo 'Erro: '.$e->getMessage();
