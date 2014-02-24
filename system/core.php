@@ -287,7 +287,7 @@ class core extends controller{
         $whereUpdate = ''; 
         foreach ($atributos as $value){
            if($value['Key']=='PRI')
-           $whereUpdate .= "\n\t   \$where_pk_id = \${$tabela}->get{$value['Field']} == NULL ? '' : \" {$value['Field']}='{\${$tabela}->get{$value['Field']}}' \" ;";  
+           $whereUpdate .= "\n\t   \$where_pk_id = \${$tabela}->get{$value['Field']}() == NULL ? '' : \" {$value['Field']}='{\${$tabela}->get{$value['Field']}()}' \" ;";  
          }
         $conteudoDelete = 
                   "\n\t #função para excluir {$tabela} por pk "
