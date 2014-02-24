@@ -49,7 +49,7 @@ class core extends controller{
           session_start();     
        }//
        
-   public function stopSession($nomeDaSessao = NULL){
+   public static function stopSession($nomeDaSessao = NULL){
           if($nomeDaSessao==NULL)
               session_destroy();
           else 
@@ -173,7 +173,7 @@ class core extends controller{
                //echo "Coluna[$k]:{$val['Field']}<br>";
                  $arquivoClass = fopen(BASEMODELCLASS.BARRA.$key.'Class.php', 'w+');
                  if($arquivoClass){
-                    if (fwrite($arquivoClass, $this->gerarModelClass($key, $value))){
+                    if (fwrite($arquivoClass, static::gerarModelClass($key, $value))){
                         echo "Arquivo {$key}Class criado com sucesso!\n<br>";
                     }
                     else{
@@ -183,7 +183,7 @@ class core extends controller{
                  }  
                  $arquivoDao = fopen(BASEMODELDAO.BARRA.$key.'Dao.php', 'w+');
                  if($arquivoDao){
-                    if (fwrite($arquivoDao, $this->gerarModelDao($key, $value))){
+                    if (fwrite($arquivoDao, static::gerarModelDao($key, $value))){
                         echo "Arquivo {$key}Dao criado com sucesso!\n<br>";
                     }
                     else{
@@ -196,7 +196,7 @@ class core extends controller{
        
      
     }
-    private function gerarModelDao($tabela,$atributos){
+    private static function gerarModelDao($tabela,$atributos){
         $conteudoDao = 
                 "<?php "
               . "\n  /* Código Gerado pelo Iwork"
@@ -204,15 +204,15 @@ class core extends controller{
               . "\n  */"
               . "\n class {$tabela}Dao extends controller {\n"
               . "\n"
-              . $this->gerarMethodCreate($tabela, $atributos)
-              . $this->gerarMethodRead($tabela, $atributos)
-              . $this->gerarMethodUpdate($tabela, $atributos)
-              . $this->gerarMethodDelete($tabela, $atributos)
+              . static::gerarMethodCreate($tabela, $atributos)
+              . static::gerarMethodRead($tabela, $atributos)
+              . static::gerarMethodUpdate($tabela, $atributos)
+              . static::gerarMethodDelete($tabela, $atributos)
               . "\n}"
             ;
             return $conteudoDao;      
     }
-    private function gerarMethodCreate($tabela,$atributos){
+    private static function gerarMethodCreate($tabela,$atributos){
         $atributosCreate = '';
         foreach ($atributos as $value){
             $atributosCreate .= "\n\t \$create ['{$value['Field']}'] = \${$tabela}->get{$value['Field']}();";
@@ -228,7 +228,7 @@ class core extends controller{
          return $conteudoCreate;       
     }
 
-    private function gerarMethodRead($tabela,$atributos){
+    private static function gerarMethodRead($tabela,$atributos){
         $atributosWhereRead ='';
         $arrayRead  = array();
         $whereRead = '';
@@ -262,7 +262,7 @@ class core extends controller{
             ;
       return $conteudoRead;       
     }
-    private function gerarMethodUpdate($tabela,$atributos){
+    private static function gerarMethodUpdate($tabela,$atributos){
         $whereUpdate ='';
         foreach ($atributos as $value){
            if($value['Key']=='PRI')
@@ -283,7 +283,7 @@ class core extends controller{
      return $conteudoUpdate;          
     }
     
-    private function gerarMethodDelete($tabela,$atributos){
+    private static function gerarMethodDelete($tabela,$atributos){
         $whereUpdate = ''; 
         foreach ($atributos as $value){
            if($value['Key']=='PRI')
@@ -298,7 +298,7 @@ class core extends controller{
             ;
       return $conteudoDelete; 
     }
-    private function gerarModelClass($tabela, $atributos){
+    private static function gerarModelClass($tabela, $atributos){
         
         $conteudoAtributos = "\n\t #Atributos\n";
         $conteudoGetSet = "\n\t #Propriedades dos atributos";
