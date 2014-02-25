@@ -6,7 +6,7 @@
         private static $pdo;  
         
        function monta_obj(){
-           
+           $this->db_host = $this->db_host == '' ? '3306' : $this->db_host ; 
            static::$dsn   = "{$this->db_driver}:host={$this->db_host};port={$this->db_port};dbname={$this->db_name}";
            static::$user  = $this->db_user;
            static::$senha = $this->db_senha;
