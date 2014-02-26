@@ -25,6 +25,9 @@ Iwork
 5- [OPCIONAL] Altere o conteudo da variável url_base, inserindo o nome da pasta do projeto caso seja modificado. 
 
 
+###Site: itxinho.github.io/iwork
+
+===
 ###Desenvolvido por 
 
 Ítalo Patrício Cordeiro de Souza
@@ -32,3 +35,4 @@ Iwork
 Bacharelando no curso de Ciência e Tecnologia
 
 Técnico em Desenvolvimento de sistemas para internet
+
