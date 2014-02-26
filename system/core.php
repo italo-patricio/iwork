@@ -10,7 +10,7 @@ class core extends controller{
         
     }
 
-        public static function seguranca_arq(){
+     public static function seguranca_arq(){
         if(isset($_SESSION['session']['logado'])){//verifica se usuario está logado e para verificar se ele tem acesso a página
             
         }
@@ -126,9 +126,9 @@ class core extends controller{
       }
 
    } 
+   
 
-
-    /**----------Criar mensagens-----------**/
+   /**----------Criar mensagens-----------**/
    public static function msg($tipo,$msg){
      switch ($tipo) {
          case '1':
@@ -152,11 +152,10 @@ class core extends controller{
  
  /*------------------Gerador de CRUD de acordo com modelagem------------------*/
   public static function syncdb(){
-       #$crud = new crud();
-       
-       $TbName = array(); //armazena os nomes das tabelas existentes no banco pre configurado no configDB
-       //var_dump($tables[0]);
-       $ColName = array();//armazena os nomes das colunas de cada tabela
+      
+      $TbName = array(); //armazena os nomes das tabelas existentes no banco pre configurado no configDB
+      
+      $ColName = array();//armazena os nomes das colunas de cada tabela
        foreach (crud::consultarNometb() as $value) {
            foreach ($value as $val){
                $TbName[] = $val;
@@ -165,13 +164,21 @@ class core extends controller{
        foreach ($TbName as $value){
            $ColName[$value] = crud::consultarNomeColuna($value); 
        }
-       //var_dump($ColName);
-       
+      
        foreach ($ColName as $key => $value) {
-           ///echo "<b>Tabela:{$key}</b><br>";
-           #foreach ($value as $k => $val) {
-               //echo "Coluna[$k]:{$val['Field']}<br>";
-                 $arquivoClass = fopen(BASEMODELCLASS.BARRA.$key.'Class.php', 'w+');
+               /*Crio as pastas para inserir a modelagem do sistema gerado de acordo
+                *  com a modelagem do banco configurado na configDB*/ 
+              try {
+                if( !file_exists(BASEAPLICATION.'model')){
+                        if(!mkdir(BASEAPLICATION.'model/'))  
+                            throw new Exception;
+                        if(!mkdir(BASEAPLICATION.'model/class/'))  
+                            throw new Exception;
+                        if(!mkdir(BASEAPLICATION.'model/dao/'))  
+                            throw new Exception;
+                 }
+                  
+                 $arquivoClass = fopen(BASEAPLICATION.'model/class'.BARRA.$key.'Class.php', 'w+');
                  if($arquivoClass){
                     if (fwrite($arquivoClass, static::gerarModelClass($key, $value))){
                         echo "Arquivo {$key}Class criado com sucesso!\n<br>";
@@ -181,7 +188,7 @@ class core extends controller{
                     }
                     fclose($arquivoClass);
                  }  
-                 $arquivoDao = fopen(BASEMODELDAO.BARRA.$key.'Dao.php', 'w+');
+                 $arquivoDao = fopen(BASEAPLICATION.'model/dao'.BARRA.$key.'Dao.php', 'w+');
                  if($arquivoDao){
                     if (fwrite($arquivoDao, static::gerarModelDao($key, $value))){
                         echo "Arquivo {$key}Dao criado com sucesso!\n<br>";
@@ -190,7 +197,12 @@ class core extends controller{
                         echo "Falha ao criar arquivo {$key}Dao !\n<br>";    
                     }
                     fclose($arquivoDao);
-                  }
+                  }  
+              } catch (Exception $ex) {
+                  echo utf8_decode('Falha: Verifique se a pasta model já existe, se existir '
+                  . 'exclua-a e tente executar o método novamente, caso persista '
+                  . 'contate o administrador ou clique <a href="https://github.com/itxinho/iwork">aqui</a>.!');
+              } 
       }
        
        

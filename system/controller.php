@@ -6,12 +6,17 @@ session_start();
  *
  * @author italo
  */
+/*Carrega a classe core que contem os métodos para utilizações diretamente na sua
+aplicação seguinte o formato core::NOME_DA_FUNCAO_DO_CORE(); */
 require_once (BASESYSTEM.'core.php');
+/*Carrega a classe crud que contem o código do crud genérico */
 require_once (BASESYSTEM.'crud.php');
 
-core::allLoadArq(BASEMODELCLASS);
-core::allLoadArq(BASEMODELDAO);
-
+/*Verifica se as bases class e dao foram definidas*/
+if(defined('BASEMODELCLASS') && defined('BASEMODELDAO')){
+    core::allLoadArq(BASEMODELCLASS);
+    core::allLoadArq(BASEMODELDAO);
+}
 class controller{
    //protected $crud ;
    public function __construct() {

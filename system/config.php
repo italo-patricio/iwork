@@ -6,18 +6,21 @@ define('url_base', 'iwork');
 define('PAGEBASE', 'base');
 
 //Constantes definidas com bases de cada diretório 
+    define('BASEAPLICATION', 'app/');
     define('BARRA', '/');
-    define('BASEVIEWPAGEMASTER', 'app/view/base/');    
+    define('BASEVIEWPAGEMASTER', BASEAPLICATION.'view/base/');    
     define('BASEPATH', getcwd().DIRECTORY_SEPARATOR);
     define('BASECSS','style/css/');
     define('BASEJS','style/js/');    
     define('BASEFONTS','style/font/');
     define('BASEIMAGES', 'style/images/');
     define('BASESYSTEM', 'system/');
-    define('BASEVIEW', 'app/view/');
-    define('BASECONTROL', 'app/control/');
-    define('BASEMODELCLASS', 'app/model/class/');
-    define('BASEMODELDAO', 'app/model/dao/');
+    define('BASEVIEW', BASEAPLICATION.'view/');
+    define('BASECONTROL', BASEAPLICATION.'control/');
+    
+    /*Descomentar apenas caso utilizar o método core::syncdb()*/
+    #define('BASEMODELCLASS', 'app/model/class/');
+    #define('BASEMODELDAO', 'app/model/dao/');
     
     define('BASEVIEWINC', BASEVIEW.'includes/');
     define('TEMPLATE_BASE', BASEVIEWPAGEMASTER.'base.php');
