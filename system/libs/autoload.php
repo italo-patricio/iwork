@@ -1,6 +1,6 @@
-<?php if(!defined('BASEPATH')) exit('Falha no carregamento do script!');
+<?php if(!defined('BASEPATH')) exit(header('Location: ../../index.php'));
 
-class autoload{    
+class autoload extends controller{    
     
     //Variavel $array_url serve para armazenar o control, action e os params enviado pelo link 
     //e capturado pelo metodo get
@@ -8,8 +8,8 @@ class autoload{
     private $params    = array();
     
     function __construct() {
-              $this->getController();        
-              $this->getUrl();
+             
+          $this->getUrl();
 
           #echo $this->array_url[2].'..'.$this->array_url[3];
           #var_dump($this->array_url);
@@ -75,10 +75,14 @@ class autoload{
         else return FALSE; 
     }
     private function getController(){//passo 3 
-        if(file_exists(BASESYSTEM.'controller.php')){
-            try{require_once (BASESYSTEM.'controller.php');}
-            catch (Exception $ex){echo 'Falha no carregamento da página '.'controller.php';}
+        if(file_exists(BASELIBS.'controlle.php')){
+            try{
+                require_once (BASELIBS.'controller.php');
+            }
+            catch (Exception $ex){    throw new Exception('Falha no carregamento da página controller.php');}
         }
+        else
+            throw new Exception('Falha no carregamento da página controller.php');
     }
     private function load($classe,$action,array $params){//passo 4
       
@@ -89,13 +93,20 @@ class autoload{
                  if(method_exists($classe,$action)){
                      $app->$action($params);
                  }
-                else echo utf8_decode("A ação especificada {$action} não existe! <br> Retornar a página inicial <a href='/".url_base."/menu/index'>clique aqui</a>")
-                ;  
+                else {
+                     throw new Exception(core::redirecionar('menu/error404'));
+                     $_SESSION['msg'] = utf8_decode("A ação especificada {$action} não existe! <br>"
+                     . " Retornar a página inicial <a href='/".url_base."/menu/index'>clique aqui</a>")
+              
+                             ;  
+                }
           } 
       
         else {
-            echo utf8_decode("A classe {$classe} não existe! <br> Retornar a página inicial <a href='/".url_base."/menu/index'>clique aqui</a>")
-                ;  
+            throw new Exception(core::redirecionar('menu/error404'));
+            $_SESSION['msg'] = utf8_decode("A classe {$classe} não existe! <br>"
+            . " Retornar a página inicial <a href='/".url_base."/menu/index'>clique aqui</a>")
+            ;  
         } 
       
     }

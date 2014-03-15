@@ -1,4 +1,5 @@
-<?php
+<?php if(!defined('BASEPATH')) exit(header('Location: ../../index.php'));
+
     class crud extends configDB{
         private static $dsn;
         private static $user;
@@ -18,7 +19,7 @@
         
         public function __construct() {
             $this->monta_obj();
-            //new crud;
+      
         }
 
 

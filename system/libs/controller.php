@@ -1,16 +1,14 @@
-<?php if(!defined('BASEPATH')) exit('Falha no carregamento do script!');
+<?php if(!defined('BASEPATH')) exit(header('Location: ../../index.php'));
+
 session_start();   
-//if(!isset($_SESSION)) session_start();
 /**
  * Description of controller
  *
  * @author italo
  */
-/*Carrega a classe core que contem os métodos para utilizações diretamente na sua
-aplicação seguinte o formato core::NOME_DA_FUNCAO_DO_CORE(); */
-require_once (BASESYSTEM.'core.php');
+
 /*Carrega a classe crud que contem o código do crud genérico */
-require_once (BASESYSTEM.'crud.php');
+require_once (BASELIBS.'crud.php');
 
 /*Verifica se as bases class e dao foram definidas*/
 if(defined('BASEMODELCLASS') && defined('BASEMODELDAO')){
@@ -39,7 +37,7 @@ class controller{
       exit();
     }
     else 
-        echo 'ERRO 404';
+        throw new Exception (core::redirecionar ('menu/erro404'));
     }	
     
 }

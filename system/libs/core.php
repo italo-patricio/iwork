@@ -1,10 +1,10 @@
-<?php if(!defined('BASEPATH')) exit('Falha no carregamento do script!');
+<?php if(!defined('BASEPATH')) exit(header('Location: ../../index.php'));
 /**
  * Description of core
  *
  * @author italo
  */
-class core extends controller{
+class core{
     
     public  function __construct() {
         
@@ -99,8 +99,9 @@ class core extends controller{
      return print ("Falha no carregamento do arquivo {$arquivoJs}.js");
   }
   //redireciona
-  public static function redirecionar($local=null){
-           header('location:  /'.url_base.BARRA.$local);
+  public static function redirecionar($local=null,$replace=TRUE,$http_response_code=NULL){
+           header('location:  /'.url_base.BARRA.$local,$replace,$http_response_code);
+           #header($string, $replace, $http_response_code)
     }
  
   public static function allLoadArq($path, $arq=NULL, $ext=NULL){
@@ -243,17 +244,20 @@ class core extends controller{
     private static function gerarMethodRead($tabela,$atributos){
         $atributosWhereRead ='';
         $arrayRead  = array();
+        $arrayAtrSelect = array();
         $whereRead = '';
         foreach ($atributos as $value){
           $atributosWhereRead .= "\n\t \$where_{$value['Field']} = \${$tabela}->get{$value['Field']}() == NULL ? '' : \" {$value['Field']}='{\${$tabela}->get{$value['Field']}()}'\" ;";
           $arrayRead[] = "\$where_{$value['Field']}";
-          
+          $arrayAtrSelect[] = $value['Field'];
         }
+       $arraySelect = empty($arrayAtrSelect) ? "*" : $arrayAtrSelect; 
        $whereRead = implode(',',$arrayRead);
         $conteudoRead =
                 "\n\t #função para consultar {$tabela}"
-              . "\n\t public function read(\${$tabela},\$or=FALSE){"
+              . "\n\t public function read(\${$tabela},\$arraySelect = array(),\$or=FALSE){"
               . "\n"
+              . "\$select_name = empty(\$arraySelect) ? array('*') : \$arraySelect;"
               . $atributosWhereRead
               . "\n\t \$array = array({$whereRead});"
               . "\n\t \$cont = 0;"
@@ -269,7 +273,7 @@ class core extends controller{
               . "\n\t   }"
               . "\n\t }"
               . "\n"
-              . "\n\t return crud::consultar(array('*'),'{$tabela}', \$where, TRUE);"
+              . "\n\t return crud::consultar(\$select_name,'{$tabela}', \$where, TRUE);"
               . "\n\t }"
             ;
       return $conteudoRead;       

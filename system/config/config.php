@@ -15,12 +15,14 @@ define('PAGEBASE', 'base');
     define('BASEFONTS','style/font/');
     define('BASEIMAGES', 'style/images/');
     define('BASESYSTEM', 'system/');
+    define('BASECONFIG', 'system/config/');
+    define('BASELIBS', 'system/libs/');    
     define('BASEVIEW', BASEAPLICATION.'view/');
     define('BASECONTROL', BASEAPLICATION.'control/');
     
     /*Descomentar apenas caso utilizar o método core::syncdb()*/
-    #define('BASEMODELCLASS', 'app/model/class/');
-    #define('BASEMODELDAO', 'app/model/dao/');
+    define('BASEMODELCLASS', 'app/model/class/');
+    define('BASEMODELDAO', 'app/model/dao/');
     
     define('BASEVIEWINC', BASEVIEW.'includes/');
     define('TEMPLATE_BASE', BASEVIEWPAGEMASTER.'base.php');
@@ -36,7 +38,7 @@ define('PAGEBASE', 'base');
 
 
 //carrega as configurações do banco
-    require_once (BASESYSTEM.'configDB.php');
+    require_once (BASECONFIG.'configDB.php');
    
     
     

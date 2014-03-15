@@ -1,4 +1,4 @@
-<?php if(!defined('BASEPATH')) exit('Falha no carregamento do script!');
+<?php if(!defined('BASEPATH')) exit(header('Location: ../../../'));
 
 ?>
 <!--

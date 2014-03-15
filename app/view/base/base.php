@@ -1,4 +1,4 @@
-<?php if(!defined('BASEPATH')) exit('Falha no carregamento do script!'); 
+<?php if(!defined('BASEPATH')) exit(header('Location: ../../../')); 
        foreach ($val as $array) {
            foreach ($array as $key => $value) {
                    if( $key == 'titulo'   )   $titulo = ($value);   
