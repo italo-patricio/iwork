@@ -17,6 +17,7 @@ define('PAGEBASE', 'base');
     define('BASESYSTEM', 'system/');
     define('BASECONFIG', 'system/config/');
     define('BASELIBS', 'system/libs/');    
+    define('BASEPLUGINS', 'system/libs/plugins/');    
     define('BASEVIEW', BASEAPLICATION.'view/');
     define('BASECONTROL', BASEAPLICATION.'control/');
     

@@ -53,6 +53,20 @@ class menu extends controller {
        $this->view('error/404',  $this->res);
      }
      
+     public function syncdb(){
+         core::syncdb();
+     }
+     
+     public function search(){
+         $usuarioClass = new usuarioClass();
+         $usuarioDao = new usuarioDao();
+         
+         $usuarioClass->setlogin('admin');
+         echo '<pre>';
+         var_dump($usuarioDao->read($usuarioClass));
+         
+         
+     }
      
      /*
       * Páginas internas
