@@ -16,7 +16,7 @@
 	 }
 	 #função para consultar usuario
 	 public function read($usuario,$arraySelect = array(),$or=FALSE){
-$select_name = empty($arraySelect) ? array('*') : $arraySelect;
+         $select_name = empty($arraySelect) ? array('*') : $arraySelect;
 	 $where_nome = $usuario->getnome() == NULL ? '' : " nome='{$usuario->getnome()}'" ;
 	 $where_login = $usuario->getlogin() == NULL ? '' : " login='{$usuario->getlogin()}'" ;
 	 $where_senha = $usuario->getsenha() == NULL ? '' : " senha='{$usuario->getsenha()}'" ;

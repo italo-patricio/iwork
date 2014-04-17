@@ -3,16 +3,13 @@
 ?>
 
 <!-- INICIO CONTEUDO -->
- <h1>Busca de cep do Correio Control</h1>
-  <label>CEP</label>
-  <input id="cep" onblur="atualizacep(this.value)" />
-  <label>Logradouro</label>
-  <input id="logradouro" />
-  <label>Bairro</label>
-  <input id="bairro" />
-  <label>Cidade</label>
-  <input id="localidade" />
-  <label>UF</label>
-  <input id="uf" />
-  <p>
+<?php
+    $form = new GeradorForm(array('id'=>'form','method'=>'post'));
+        #$form->setAtributos_form();
+        $form->addCampo(NULL,'maskDate','data','text','Data: ','dia/mes/ano',NULL,NULL,TRUE);
+        $form->addSelect('cor',['1'=>'Azul','2'=>'Amarelo','3'=>'Branco']);
+        $form->addCampo(NULL,NULL,'bt','submit',NULL,'Validar');
+        $form->show();
+?>
+        
 <!-- FIM CONTEUDO -->

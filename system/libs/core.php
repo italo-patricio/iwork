@@ -256,8 +256,7 @@ class core{
         $conteudoRead =
                 "\n\t #função para consultar {$tabela}"
               . "\n\t public function read(\${$tabela},\$arraySelect = array(),\$or=FALSE){"
-              . "\n"
-              . "\$select_name = empty(\$arraySelect) ? array('*') : \$arraySelect;"
+              . "\n\t\$select_name = empty(\$arraySelect) ? array('*') : \$arraySelect;"
               . $atributosWhereRead
               . "\n\t \$array = array({$whereRead});"
               . "\n\t \$cont = 0;"
