@@ -12,7 +12,7 @@ class autoload extends controller{
           $this->getUrl();
 
           #echo $this->array_url[2].'..'.$this->array_url[3];
-          #var_dump($this->array_url);
+          #print_r($this->array_url);
           #var_dump($this->params);
          
      
@@ -88,13 +88,15 @@ class autoload extends controller{
       
         if(file_exists(BASECONTROL.$classe."Control.php")){
              require_once (BASECONTROL.$classe."Control.php");
-            
-              $app = new $classe();
+            $classe = $classe.'Control';
+              $app = new  $classe();
                  if(method_exists($classe,$action)){
+                     $params =  $params;
                      $app->$action($params);
                  }
                 else {
-                     throw new Exception(core::redirecionar('menu/error404'));
+                     error_reporting(E_ALL);      
+                     #throw new Exception(core::redirecionar('menu/error404'));
                      $_SESSION['msg'] = utf8_decode("A ação especificada {$action} não existe! <br>"
                      . " Retornar a página inicial <a href='/".url_base."/menu/index'>clique aqui</a>")
               
@@ -103,7 +105,8 @@ class autoload extends controller{
           } 
       
         else {
-            throw new Exception(core::redirecionar('menu/error404'));
+              error_reporting(E_ALL);
+            #throw new Exception(core::redirecionar('menu/error404'));
             $_SESSION['msg'] = utf8_decode("A classe {$classe} não existe! <br>"
             . " Retornar a página inicial <a href='/".url_base."/menu/index'>clique aqui</a>")
             ;  

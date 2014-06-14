@@ -6,20 +6,8 @@
  */
 
 
-class menu extends controller {
+class menuControl extends controller {
     
-    /* variavel $res serve para enviar paramentros de resultados para a view requisitada 
-     * o valor dela antes de chegar na view passa pelo arquivo controller.php recebebendo
-     * um outro nome de variável, a qual será utilizada dentro da view
-     * @varivavel
-     */
-    private $res = array();
-    
-    /*
-     * Variavel $atr_page serve para informar atributos básico para a view informada 
-     * @variavel 
-     */
-     private $atr_page;
     
     function __construct() {
         parent::__construct();
@@ -55,17 +43,6 @@ class menu extends controller {
      
      public function syncdb(){
          core::syncdb();
-     }
-     
-     public function search(){
-         $usuarioClass = new usuarioClass();
-         $usuarioDao = new usuarioDao();
-         
-         $usuarioClass->setlogin('admin');
-         echo '<pre>';
-         var_dump($usuarioDao->read($usuarioClass));
-         
-         
      }
      
      /*

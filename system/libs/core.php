@@ -106,9 +106,8 @@ class core{
  
   public static function allLoadArq($path, $arq=NULL, $ext=NULL){
       $ext = $ext ==NULL ? ".php" : $ext ;
-      $require = NULL;
       
-      if($arq==NULL){
+      if(is_null($arq)){
         
        $diretorio = dir($path);
 
@@ -150,8 +149,361 @@ class core{
      } 
     $_SESSION['msg'] = array('tipo'=>$tipoMsg,'texto'=>$msg);  
  }
- 
- /*------------------Gerador de CRUD de acordo com modelagem------------------*/
+ /*------------------Gerador de CRUD para modelo AR-Active Record------------------*/ 
+  public static function syncdbAR(){
+     $TbName = array(); //armazena os nomes das tabelas existentes no banco pre configurado no configDB
+      
+      $ColName = array();//armazena os nomes das colunas de cada tabela
+       foreach (crud::consultarNometb() as $value) {
+           foreach ($value as $val){
+               $TbName[] = $val;
+           }
+       }
+       foreach ($TbName as $value){
+           $ColName[$value] = crud::consultarNomeColuna($value); 
+       }
+
+           
+       foreach ($ColName as $key => $value) {
+               /*Crio as pastas para inserir a modelagem do sistema gerado de acordo
+                *  com a modelagem do banco configurado na configDB*/ 
+              try {
+                 if( !file_exists(BASEAPLICATION.'model'))
+                    if(!mkdir(BASEAPLICATION.'model/'))  
+                       throw new Exception;
+                 if( !file_exists(BASEVIEWINC.$key))
+                    if(!mkdir(BASEVIEWINC.$key.'/'))  
+                       throw new Exception;
+                  
+                 $arquivoControl = fopen(BASECONTROL.$key.'Control.php', 'w+');
+                 if($arquivoControl){
+                    if (fwrite($arquivoControl, static::gerarControl($key))){
+                        echo "Arquivo {$key}Control criado com sucesso!\n<br>";
+                    }
+                    else{
+                        echo "Falha ao criar arquivo {$key}Control !\n<br>";    
+                    }
+                    fclose($arquivoControl);
+                 }  
+                 $arquivoModel = fopen(BASEAPLICATION.'model/'.$key.'.php', 'w+');
+                 if($arquivoModel){
+                    if (fwrite($arquivoModel, static::gerarModelAR($key))){
+                        echo "Arquivo {$key} Model criado com sucesso!\n<br>";
+                    }
+                    else{
+                        echo "Falha ao criar arquivo {$key}Dao !\n<br>";    
+                    }
+                    fclose($arquivoModel);
+                  }
+                  $arquivoForm = fopen(BASEVIEWINC.$key.BARRA.'_form.php', 'w+');
+                 if($arquivoForm){
+                    if (fwrite($arquivoForm, static::gerarView_Form($key, $value))){
+                        echo "Arquivo {$key}/_form.php criado com sucesso!\n<br>";
+                    }
+                    else{
+                        echo "Falha ao criar arquivo {$key}/_form.php !\n<br>";    
+                    }
+                    fclose($arquivoForm);
+                  }
+                 $arquivoManage = fopen(BASEVIEWINC.$key.BARRA.'_manage.php', 'w+');
+                 if($arquivoManage){
+                    if (fwrite($arquivoManage, static::gerarView_Manage($key, $value))){
+                        echo "Arquivo {$key}/_manage.php criado com sucesso!\n<br>";
+                    }
+                    else{
+                        echo "Falha ao criar arquivo {$key}/_manage.php !\n<br>";    
+                    }
+                    fclose($arquivoManage);
+                  }
+                 $arquivoView = fopen(BASEVIEWINC.$key.BARRA.'_view.php', 'w+');
+                 if($arquivoView){
+                    if (fwrite($arquivoView, static::gerarView_View($key, $value))){
+                        echo "Arquivo {$key}/_view.php criado com sucesso!\n<br>";
+                    }
+                    else{
+                        echo "Falha ao criar arquivo {$key}/_view.php !\n<br>";    
+                    }
+                    fclose($arquivoView);
+                  }
+                 $arquivoUpdate = fopen(BASEVIEWINC.$key.BARRA.'_update.php', 'w+');
+                 if($arquivoUpdate){
+                    if (fwrite($arquivoUpdate, static::gerarView_Update($key, $value))){
+                        echo "Arquivo {$key}/_update.php criado com sucesso!\n<br>";
+                    }
+                    else{
+                        echo "Falha ao criar arquivo {$key}/_update.php !\n<br>";    
+                    }
+                    fclose($arquivoUpdate);
+                  }
+              } catch (Exception $ex) {
+                  echo utf8_decode('Falha: Verifique se a pasta model e '.$key.' já existe, se existir '
+                  . 'exclua-a e tente executar o método novamente, caso persista '
+                  . 'contate o administrador ou clique <a href="https://github.com/itxinho/iwork">aqui</a>.!');
+              } 
+      }
+  }
+    private static function gerarControl($tabela){
+        $conteudoControl = 
+"<?php if (!defined('BASEPATH')) exit(header('Location: ./../../'));
+
+/**
+ * Description of {$tabela}Control
+ *
+ * @author Ítalo Patrício
+ * @author Servulo Fonseca 
+ */
+class {$tabela}Control extends controller {
+
+
+
+    public function __construct() {
+        parent::__construct();
+       \$this->include = '{$tabela}/';
+    }
+
+//View's
+    public function index() {
+
+    }
+
+    public function manage() {
+        try {
+            \$this->atr_page['titulo'] = 'Gerenciar {$tabela}';
+            \${$tabela} = {$tabela}::all();
+            \$this->atr_page['{$tabela}'] = (object) \${$tabela};
+            \$this->res[] = \$this->atr_page;
+
+            \$this->view('_manage', \$this->res);
+        } catch (ActiveRecord\ExpressionsException \$ex) {
+            echo 'Houve falha!';
+        }
+    }
+
+    public function form() {
+        \$this->atr_page['titulo'] = 'Criar {$tabela}';
+        \$this->res[] = \$this->atr_page;
+
+        \$this->view('_form', \$this->res);
+    }
+    public function edit(\$param) {
+         \$this->atr_page['titulo'] = 'Alterar {$tabela}';
+         \${$tabela} = {$tabela}::find(\$param[0]['valor']);
+         \$this->atr_page['{$tabela}'] = (object) \${$tabela};
+         \$this->res[] = \$this->atr_page;
+
+        \$this->view('_update', \$this->res);
+    }
+
+
+//Action
+    public function create() {
+        try {
+            \${$tabela} = new {$tabela}(\$_POST);
+            \${$tabela}->save(true);
+            echo 'Salvo com sucesso!';
+        } catch (ActiveRecord\ActiveRecordException \$ex) {
+            echo 'Houve falha!';
+        }
+    }
+
+    public function read(\$param) {
+        try {
+
+            \$this->atr_page['titulo'] = 'Visualizar {$tabela}';
+            \${$tabela} = {$tabela}::find(\$param[0]['valor']);
+            \$this->atr_page['{$tabela}'] = (object) \${$tabela};
+            \$this->res[] = \$this->atr_page;
+
+            \$this->view('_view', \$this->res);
+        } catch (\ActiveRecord\ExpressionsException \$ex) {
+            echo 'Houve falha!';
+        }
+    }
+
+    public function update(\$param) {
+      try {          
+            \${$tabela} = {$tabela}::find(\$param[0]['valor']);
+            \${$tabela}->update_attributes(\$_POST);
+            core::redirecionar(\$this->include.'manage');
+        } catch (\ActiveRecord\ExpressionsException \$ex) {
+            echo 'Houve falha!';
+        }
+    }
+    public function delete(\$param) {
+        try {
+            \${$tabela} = {$tabela}::find(\$param[0]['valor']);
+            \${$tabela}->delete();
+            core::redirecionar(\$this->include.'manage');
+        } catch (\ActiveRecord\ExpressionsException \$ex) {
+            echo 'Houve falha!';
+        }
+    }
+
+}
+"
+            ;
+            return $conteudoControl;
+    }
+    private static function gerarModelAR($tabela){
+        $conteudoModel = 
+                "<?php "
+              . "\n  /* Código Gerado pelo Iwork"
+              . "\n     @author Ítalo Patrício "
+              . "\n     @author Servulo Fonseca "
+              . "\n  */"
+              . "\n class {$tabela} extends ActiveRecord\Model{}"
+            ;
+            return $conteudoModel;      
+    }
+    private static function gerarView_Form($tabela, $atributos){
+        $conteudoForm ='';
+        foreach ($atributos as $value) {
+
+        if(stristr('int', $value['Type']))
+            $input = "<input type=\"number\" class=\"form-control\" id=\"{$value['Field']}\" name=\"{$value['Field']}\" placeholder=\"{$value['Field']}\">";
+            if(stristr('varchar', $value['Type']))
+            $input = "<input type=\"text\" class=\"form-control\" id=\"{$value['Field']}\" name=\"{$value['Field']}\" placeholder=\"{$value['Field']}\">";
+            else if(stristr('date', $value['Type']))
+            $input = "<input type=\"date\" class=\"form-control\" id=\"{$value['Field']}\" name=\"{$value['Field']}\" placeholder=\"{$value['Field']}\">";
+            else if(stristr('datetime', $value['Type']))
+            $input = "<input type=\"datetime\" class=\"form-control\" id=\"{$value['Field']}\" name=\"{$value['Field']}\" placeholder=\"{$value['Field']}\">";
+            else if(stristr('text', $value['Type']))
+            $input = "<textarea class=\"form-control\" rows=\"4\" cols=\"50\" id=\"{$value['Field']}\" name=\"{$value['Field']}\"></textarea>";
+            else 
+            $input = "<input type=\"text\" class=\"form-control\" id=\"{$value['Field']}\" name=\"{$value['Field']}\" placeholder=\"{$value['Field']}\">";
+    
+            $conteudoForm .= 
+"<div class=\"form-group\">
+
+    <label for=\"{$value['Field']}\">{$value['Field']}</label>
+
+    {$input}
+
+</div> 
+               ";
+        }
+        
+        $conteudoModel = 
+"<form action=\"<?php echo BARRA.url_base.BARRA.\"{$tabela}/create\" ?>\" method=\"POST\" >"
+
+    .$conteudoForm
+
+."<button type=\"submit\" class=\"btn btn-primary\">Cadastrar</button>
+
+</form>"
+            ;
+            return $conteudoModel; 
+    }
+    private static function gerarView_Manage($tabela, $atributos){
+        
+        $primary_key= '';
+        $camposHead = '';
+        $camposBody = '';
+        foreach ($atributos as $value) {
+            if(stristr($value['Key'],'pri'))
+                $primary_key = $value['Field'];
+            
+            $camposHead .= "<th>{$value['Field']}</th>";
+            $camposBody .= "<td>{\${$tabela}->{$value['Field']}}</td>";
+        }
+        
+        
+        $conteudoManage = 
+"<?php \${$tabela} = \$val[0]['{$tabela}']; ?>
+   <table class=\"dataTable\">
+   <thead>
+       {$camposHead}
+       <th>Opções</th>    
+   </thead>
+   <tbody>
+     <?php
+       foreach (\${$tabela} as \${$tabela}){ 
+           echo  \"<tr>\"
+               . \"{$camposBody}\"
+               . \"<td>\"
+                   . \"<a href='\".BARRA.url_base.BARRA.\"{$tabela}/read/id/{\${$tabela}->{$primary_key}}'><span class='glyphicon glyphicon-eye-open' title='Visualizar'></span></a> \"
+                   . \"<a href='\".BARRA.url_base.BARRA.\"{$tabela}/edit/id/{\${$tabela}->{$primary_key}}'><span class='glyphicon glyphicon-pencil' title='Editar'></span></a> \"
+                   . \"<a href='\".BARRA.url_base.BARRA.\"{$tabela}/delete/id/{\${$tabela}->{$primary_key}}'><span class='glyphicon glyphicon-trash' title='Excluir'></span></a>\"
+               . \"</td>\"
+               . \"</tr>\"
+               ;
+       } ?>  
+   </tbody>
+   </table>"
+                ;
+        
+        return $conteudoManage;
+    }
+    private static function gerarView_View($tabela, $atributos){
+        $dadosView = "";
+        
+        foreach ($atributos as $value) {
+            $dadosView .= "
+                            <tr>
+                                <td>{$value['Field']}</td>
+                                <td><?=\${$tabela}->{$value['Field']}?></td>                
+                            </tr>"
+                    ;
+        }
+        
+        $conteudoView =""
+. "<?php  \${$tabela} = \$val[0]['{$tabela}']; ?>
+
+    <table class=\"table\">
+            {$dadosView}
+    </table>
+        ";
+        
+        return $conteudoView;
+    }    
+    private static function gerarView_Update($tabela, $atributos){
+        $primary_key  ='';
+        $conteudoForm ='';
+        foreach ($atributos as $value) {
+            if(stristr($value['Key'],'pri'))
+            $primary_key = $value['Field']; 
+            if(stristr($value['Type'],'int'))
+            $input = "<input type=\"number\" class=\"form-control\" id=\"{$value['Field']}\" name=\"{$value['Field']}\" placeholder=\"{$value['Field']}\"> value=\"<?=\${$tabela}->{$value['Field']}?>\" ";
+            if(stristr($value['Type'],'varchar'))
+            $input = "<input type=\"text\" class=\"form-control\" id=\"{$value['Field']}\" name=\"{$value['Field']}\" placeholder=\"{$value['Field']}\" value=\"<?=\${$tabela}->{$value['Field']}?>\" >";
+            else if(stristr($value['Type'],'date'))
+            $input = "<input type=\"date\" class=\"form-control\" id=\"{$value['Field']}\" name=\"{$value['Field']}\" placeholder=\"{$value['Field']}\" value=\"<?=\${$tabela}->{$value['Field']}?>\" >";
+            else if(stristr($value['Type'],'datetime'))
+            $input = "<input type=\"datetime\" class=\"form-control\" id=\"{$value['Field']}\" name=\"{$value['Field']}\" placeholder=\"{$value['Field']}\" value=\"<?=\${$tabela}->{$value['Field']}?>\" >";
+            else if(stristr($value['Type'],'text'))
+            $input = "<textarea class=\"form-control\" rows=\"4\" cols=\"50\" id=\"{$value['Field']}\" name=\"{$value['Field']}\"><?=\${$tabela}->{$value['Field']}?></textarea>";
+            else 
+            $input = "<input type=\"text\" class=\"form-control\" id=\"{$value['Field']}\" name=\"{$value['Field']}\" placeholder=\"{$value['Field']}\" value=\"<?=\${$tabela}->{$value['Field']}?>\" >";
+        
+             $conteudoForm .= 
+"<div class=\"form-group\">
+
+    <label for=\"{$value['Field']}\">{$value['Field']}</label>
+
+    {$input}
+
+</div> 
+               ";
+        } 
+        
+        $conteudoUpdate = ""
+. "<?php  \${$tabela} = \$val[0]['{$tabela}']; ?>
+
+<form action=\"<?php echo BARRA . url_base . BARRA . \"{$tabela}/update/id/{\${$tabela}->{$primary_key}}\" ?>\" method=\"POST\" >
+
+ {$conteudoForm}
+
+<button type=\"submit\" class=\"btn btn-primary\">Editar</button>
+
+</form>
+
+            ";
+        
+       return $conteudoUpdate;          
+    }
+    
+    
+  /*------------------Gerador de CRUD de acordo com modelagem------------------*/
   public static function syncdb(){
       
       $TbName = array(); //armazena os nomes das tabelas existentes no banco pre configurado no configDB
@@ -342,5 +694,6 @@ class core{
             ;
        return $conteudoClass;
     }
- 
+    
+     
 } 

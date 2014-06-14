@@ -1,7 +1,7 @@
 <?php
 
 //url base
-define('url_base', 'iwork');
+define('url_base', 'isr');
 //pagina base
 define('PAGEBASE', 'base');
 
@@ -21,12 +21,18 @@ define('PAGEBASE', 'base');
     define('BASEVIEW', BASEAPLICATION.'view/');
     define('BASECONTROL', BASEAPLICATION.'control/');
     
-    /*Descomentar apenas caso utilizar o método core::syncdb()*/
-    define('BASEMODELCLASS', 'app/model/class/');
-    define('BASEMODELDAO', 'app/model/dao/');
+    define('BASEMODEL', 'app/model/');
+    
+    /* 
+     * Descomentar apenas caso utilizar o método core::syncdb()
+     * para gerar CLASS e DAO. Lembrar de descomentar a inclusão das class
+     * no arquivo controller.php
+     */
+    #define('BASEMODELCLASS', 'app/model/class/');
+    #define('BASEMODELDAO', 'app/model/dao/');
     
     define('BASEVIEWINC', BASEVIEW.'includes/');
-    define('TEMPLATE_BASE', BASEVIEWPAGEMASTER.'base.php');
+    define('TEMPLATE_BASE', BASEVIEWPAGEMASTER);
     /**opcional*/
     define('BOOTSTRAPCSS','style/dist/css/');
     define('BOOTSTRAPJS','style/dist/js/');
@@ -38,9 +44,7 @@ define('PAGEBASE', 'base');
 #define('BASETEMP',BASESYSTEM.'temp/');
 
 
-//carrega as configurações do banco
-    require_once (BASECONFIG.'configDB.php');
-   
+        
     
     
                                                                                                                                                                                                                                                                                           

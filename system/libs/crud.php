@@ -1,5 +1,7 @@
 <?php if(!defined('BASEPATH')) exit(header('Location: ../../index.php'));
-
+//carrega as configurações do banco
+core::allLoadArq(BASECONFIG,'configDB');
+    
     class crud extends configDB{
         private static $dsn;
         private static $user;
