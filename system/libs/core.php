@@ -108,6 +108,8 @@ class core{
       $ext = $ext ==NULL ? ".php" : $ext ;
       
       if(is_null($arq)){
+      $require = NULL;
+      
         
        $diretorio = dir($path);
 
@@ -149,6 +151,7 @@ class core{
      } 
     $_SESSION['msg'] = array('tipo'=>$tipoMsg,'texto'=>$msg);  
  }
+
  /*------------------Gerador de CRUD para modelo AR-Active Record------------------*/ 
   public static function syncdbAR(){
      $TbName = array(); //armazena os nomes das tabelas existentes no banco pre configurado no configDB
@@ -694,6 +697,4 @@ class {$tabela}Control extends controller {
             ;
        return $conteudoClass;
     }
-    
-     
 } 
