@@ -108,8 +108,6 @@ class core{
       $ext = $ext ==NULL ? ".php" : $ext ;
       
       if(is_null($arq)){
-      $require = NULL;
-      
         
        $diretorio = dir($path);
 
@@ -151,7 +149,6 @@ class core{
      } 
     $_SESSION['msg'] = array('tipo'=>$tipoMsg,'texto'=>$msg);  
  }
-
  /*------------------Gerador de CRUD para modelo AR-Active Record------------------*/ 
   public static function syncdbAR(){
      $TbName = array(); //armazena os nomes das tabelas existentes no banco pre configurado no configDB
@@ -274,9 +271,8 @@ class {$tabela}Control extends controller {
             \$this->atr_page['titulo'] = 'Gerenciar {$tabela}';
             \${$tabela} = {$tabela}::all();
             \$this->atr_page['{$tabela}'] = (object) \${$tabela};
-            \$this->res[] = \$this->atr_page;
-
-            \$this->view('_manage', \$this->res);
+            
+            \$this->view('_manage');
         } catch (ActiveRecord\ExpressionsException \$ex) {
             echo 'Houve falha!';
         }
@@ -284,17 +280,15 @@ class {$tabela}Control extends controller {
 
     public function form() {
         \$this->atr_page['titulo'] = 'Criar {$tabela}';
-        \$this->res[] = \$this->atr_page;
 
-        \$this->view('_form', \$this->res);
+        \$this->view('_form');
     }
     public function edit(\$param) {
          \$this->atr_page['titulo'] = 'Alterar {$tabela}';
          \${$tabela} = {$tabela}::find(\$param[0]['valor']);
          \$this->atr_page['{$tabela}'] = (object) \${$tabela};
-         \$this->res[] = \$this->atr_page;
 
-        \$this->view('_update', \$this->res);
+        \$this->view('_update');
     }
 
 
@@ -315,7 +309,6 @@ class {$tabela}Control extends controller {
             \$this->atr_page['titulo'] = 'Visualizar {$tabela}';
             \${$tabela} = {$tabela}::find(\$param[0]['valor']);
             \$this->atr_page['{$tabela}'] = (object) \${$tabela};
-            \$this->res[] = \$this->atr_page;
 
             \$this->view('_view', \$this->res);
         } catch (\ActiveRecord\ExpressionsException \$ex) {
@@ -412,7 +405,7 @@ class {$tabela}Control extends controller {
         
         
         $conteudoManage = 
-"<?php \${$tabela} = \$val[0]['{$tabela}']; ?>
+"<?php \${$tabela} = \$this->atr_page['{$tabela}']; ?>
    <table class=\"dataTable\">
    <thead>
        {$camposHead}
@@ -450,7 +443,7 @@ class {$tabela}Control extends controller {
         }
         
         $conteudoView =""
-. "<?php  \${$tabela} = \$val[0]['{$tabela}']; ?>
+. "<?php  \${$tabela} = \$this->atr_page['{$tabela}']; ?>
 
     <table class=\"table\">
             {$dadosView}
@@ -490,7 +483,7 @@ class {$tabela}Control extends controller {
         } 
         
         $conteudoUpdate = ""
-. "<?php  \${$tabela} = \$val[0]['{$tabela}']; ?>
+. "<?php  \${$tabela} = \$this->atr_page['{$tabela}']; ?>
 
 <form action=\"<?php echo BARRA . url_base . BARRA . \"{$tabela}/update/id/{\${$tabela}->{$primary_key}}\" ?>\" method=\"POST\" >
 
@@ -697,4 +690,6 @@ class {$tabela}Control extends controller {
             ;
        return $conteudoClass;
     }
+    
+     
 } 

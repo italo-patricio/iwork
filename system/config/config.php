@@ -38,7 +38,7 @@ define('PAGEBASE', 'base');
     define('BOOTSTRAPJS','style/dist/js/');
     define('BOOTSTRAPFONTS','style/dist/fonts/');
     /**opcional*/
-    
+    define('BASETHEME', 'theme/');
 
 //Pasta temp
 #define('BASETEMP',BASESYSTEM.'temp/');

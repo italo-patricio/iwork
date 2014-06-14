@@ -8,7 +8,6 @@
      */
     ini_set('memory_limit', '-1');
     
-    
     /*
      * Carrega as configurações do sistema
      */
@@ -38,26 +37,29 @@
      */
     core::allLoadArq(BASELIBS,'controller');
     
-    if(file_exists(BASECONFIG.'configDB.php')){//se a configuração do banco não existir é iniciado o passo de instalação
+    /*
+     * Carrega os plugins disponiveis 
+     */
+    core::allLoadArq(BASEPLUGINS);
     
     if(file_exists(BASELIBS.'autoload.php')){
         try {
                
-             require_once (BASELIBS.'autoload.php');
+            core::allLoadArq(BASELIBS,'autoload');
              //executa a classe autoload para captura das requisições enviada pela url
              new autoload;
               
              
         }
       catch (Exception $ex){
-         throw new Exception(core::redirecionar('menu/erro404'),404);
+            echo '<pre>';
+            error_reporting(E_ALL);
+            echo $ex;
+         #throw new Exception(core::redirecionar('menu/erro404'),404);
          #throw new Exception($message, $code, $previous);
       }
     }     
     else  
         throw new Exception(core::redirecionar('menu/erro404'),404);        
-    }
-    else {
-        require_once ('install/instaler.php');
-    }
+    
     
